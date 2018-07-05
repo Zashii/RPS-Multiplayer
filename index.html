@@ -121,11 +121,12 @@
 
             $("#chatsubmit").on("click", function(){
                 var chatmsg = $("#chatbox").val();
-                database.ref("chatbox").push({
-                            message: chatmsg
-                });
+
                 if (p1playing || p2playing){
-                    $(".chatbox").append("<p>"+ selectedName + ": " + chatmsg + "</p>");
+                    database.ref("chatbox").push({
+                            name: selectedName,
+                            message: chatmsg
+                    });
                 }
             });
             
@@ -353,7 +354,16 @@
                 }, 2000);
             }
 
-             database.ref("player1").on("value", function(snapshot) {
+            database.ref("chatbox").on("child_added", function(snapshot) {
+                // if (p1playing || p2playing){
+                    //alert (snapshot.val().message);
+                    if (snapshot.exists()){
+                        $(".chatbox").append("<p>"+ snapshot.val().name + ": " + snapshot.val().message + "</p>");
+                    }
+                // }
+            });
+
+            database.ref("player1").on("value", function(snapshot) {
                  
                  var val = snapshot.val();
                 
@@ -609,7 +619,7 @@
                 <!-- <button class="answer4 btn" style="height: 35px"></button> -->
             <!-- </div> --> 
 
-            <div class="container chatbox" style="height:200px; background-color: lightgrey">
+            <div class="container chatbox" style="height:200px; background-color: lightgrey; overflow: scroll">
 
         
             </div>
