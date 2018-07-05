@@ -386,6 +386,9 @@
                     });
                  } else if (snapshot.child("player1").exists()==false)  {
                     $("#p1i").html("Waiting for Player 1");
+                    $("#p1name").html("");
+                    $("#p1wr").html("");
+                    p1scoreOnce = true;
                  }
                 
 
@@ -458,7 +461,10 @@
                         }                
                     });
                  } else if (snapshot.child("player2").exists()==false) {
-                    $("#p2i").html("Waiting for Player 2");             
+                    $("#p2i").html("Waiting for Player 2");      
+                    $("#p2name").html("");          
+                    $("#p2wr").html("");
+                    p2scoreOnce = true;
                  }
 
                 if (snapshot.child("move").exists()){
@@ -513,7 +519,7 @@
                      });
                  } else if (p2playing) {
                      database.ref("player2").set({
-                         player1: null
+                         player2: null
                      });
                  }
              }
