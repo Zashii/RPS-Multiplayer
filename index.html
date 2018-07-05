@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <meta charset="UTF-8">
+    <title>Rock Paper Scissors Game</title>
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <!-- <script src="assets/javascript/app.js"></script>  -->
+    <link href="https://fonts.googleapis.com/css?family=Cormorant+Unicase" rel="stylesheet">
+
+    <style>
+
+        body {
+          /* background-image: url(assets/images/background.jpg); */
+          font-family: 'Cormorant Unicase', serif;
+          font-weight: strong;
+        }
+
+        .tempHidden {
+            display: none;
+        }
+
+    </style>
+
+    <script>
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAo_0GOYwtPkeFsgtcN5Lm7NDreIsTsH1I",
+            authDomain: "rockpaperscissors-7ce7e.firebaseapp.com",
+            databaseURL: "https://rockpaperscissors-7ce7e.firebaseio.com",
+            projectId: "rockpaperscissors-7ce7e",
+            storageBucket: "rockpaperscissors-7ce7e.appspot.com",
+            messagingSenderId: "522884865815"
+        };
+        firebase.initializeApp(config);
+        database = firebase.database();
+        ref = database.ref();
+
+        $(document).ready(function(){
+
+            var p1selected = false;
+            var p2selected = false;
+            var p1playing = false;
+            var p2playing = false;
+            var selectedName;
+            var p1scoreOnce = true;
+            var p2scoreOnce = true;
+            var p1moved = false;
+            var p2moved = false;
+            var p1move;
+            var p2move;
+           
+
+            $("#p1r").on("click", function(){
+                if (p1playing == true && (p1moved == false)) {
+                    p1moved = true;
+                    //$("#p1").append("<img class=\"p1img\" src=\"assets/images/rock.png\" style=\"width: 150px\">");
+                    database.ref("player1").set({
+                            player1: selectedName,
+                            move: "rock"
+                    });
+                }
+            });
+            $("#p1s").on("click", function(){
+                if (p1playing == true && (p1moved == false)) {
+                    p1moved = true;
+                    //$("#p1").append("<img class=\"p1img\" src=\"assets/images/scissors.png\" style=\"width: 150px\">");
+                    database.ref("player1").set({
+                            player1: selectedName,
+                            move: "scissors"
+                    });
+                }
+            });
+            $("#p1p").on("click", function(){
+                if (p1playing == true && (p1moved == false)) {
+                    p1moved = true;
+                    //$("#p1").append("<img class=\"p1img\" src=\"assets/images/paper.png\" style=\"width: 150px\">");
+                    database.ref("player1").set({
+                            player1: selectedName,
+                            move: "paper"
+                    });
+                }
+            });
+
+             $("#p2r").on("click", function(){
+                if (p2playing == true && (p2moved == false)) {
+                    p2moved = true;
+                    //$("#p2").append("<img class=\"p2img\" src=\"assets/images/rock.png\" style=\"width: 150px\">");
+                    database.ref("player2").set({
+                            player2: selectedName,
+                            move: "rock"
+                    });
+                }
+            });
+            $("#p2s").on("click", function(){
+                if (p2playing == true && (p2moved == false)) {
+                    p2moved = true;
+                    //$("#p2").append("<img class=\"p2img\" src=\"assets/images/scissors.png\" style=\"width: 150px\">");
+                    database.ref("player2").set({
+                            player2: selectedName,
+                            move: "scissors"
+                    });
+                }
+            });
+            $("#p2p").on("click", function(){
+                if (p2playing == true && (p2moved == false)) {
+                    p2moved = true;
+                    //$("#p2").append("<img class=\"p2img\" src=\"assets/images/paper.png\" style=\"width: 150px\">");
+                    database.ref("player2").set({
+                            player2: selectedName,
+                            move: "paper"
+                    });
+                }
+            });
+
+            $("#chatbox").on("click", function(){
+                var chatmsg = $("#chatbox").val();
+                database.ref("chatbox").push({
+                            message: chatmsg
+                });
+                $(".chatbox").append(chatmsg);
+            });
+            
+            $("#start").on("click", function(){
+                $("#start").hide();
+                $("#namer").hide();
+                selectedName = $("#namer").val();
+                    if (p1selected != true){
+                        p1playing = true;
+                        $("#p1i").html("You are playing!");
+                        database.ref("player1").set({
+                            player1: selectedName
+                        });
+                        //console.log("hello" + database.ref("player1").child("player1"));
+                        p1selected = true;
+
+                        database.ref("players").once("value", function(snapshot) {
+                        
+                            if (snapshot.child(selectedName).exists()){
+                                // alert ("already exists");
+                                
+                                //$("#p1").append("<p>Wins: " + snapshot.child(selectedName).val().win + "</p><p> Losses: " + snapshot.child(selectedName).val().loss + "</h4>");
+            
+                            } else {
+                                database.ref("players").child(selectedName).set({
+                                    name: $("#namer").val(),
+                                    win: 0,
+                                    loss: 0
+                                });
+                                
+                                //$("#p1").append("<p>Wins: 0</p><p> Losses: 0</h4>");
+                            }
+                            
+
+                        });
+                        
+                        
+                    } else if (p2selected != true) {
+                        $("#p2i").html("You are playing!");
+                        p2playing = true;
+                        //$("#p2").append("<h2>" + $("#namer").val() + "</h2>");
+                        database.ref("player2").set({
+                            player2: selectedName
+                        });
+                        p2selected = true;
+
+                        database.ref("players").once("value", function(snapshot) {
+                        
+                        if (snapshot.child(selectedName).exists()){
+                            //    alert ("already exists");
+                            //$("#p2").append("<p>Wins: " + snapshot.child(selectedName).val().win + "</p><p> Losses: " + snapshot.child(selectedName).val().loss + "</h4>");
+                        } else {
+                            database.ref("players").child(selectedName).set({
+                                    name: $("#namer").val(),
+                                    win: 0,
+                                    loss: 0
+                            });
+                            //a$("#p2").append("<p>Wins: " + "0" + "</p><p> Losses: " + "0" + "</p>");
+                        }
+                        
+
+                        });
+                    }
+            });
+
+            var p1win = function(){
+                    p1move = "";
+                    p1moved = false;
+                    p2move = "";
+                    p2moved = false;
+                    $("#result").html("Player 1 wins!");
+                    setTimeout(function(){
+                        database.ref("player1").once("value", function(snapshot) {
+                            database.ref("player1").set({
+                                player1: snapshot.val().player1,
+                                move: null
+                            });
+                            database.ref("players").once("value", function(snapshot2) {
+                                var winCount = parseInt(snapshot2.child(snapshot.val().player1).val().win) + 1;
+                                database.ref("players").child(snapshot.val().player1).set({
+                                    name: snapshot.val().player1,
+                                    win: winCount,
+                                    loss: snapshot2.child(snapshot.val().player1).val().loss
+                                });
+
+                                $("#p1wr").html(" <p>Wins: " + winCount + "</p><p> Losses: " + snapshot2.child(snapshot.val().player1).val().loss + "</p>");
+
+                            });
+                        });
+                            
+                        $(".p1img").remove();
+                        $("#result").html("");
+                    }, 2000);
+                    setTimeout(function(){
+                        database.ref("player2").once("value", function(snapshot) {
+                            database.ref("player2").set({
+                                player2: snapshot.val().player2,
+                                move: null
+                            });
+                            database.ref("players").once("value", function(snapshot2) {
+                                var lossCount = parseInt(snapshot2.child(snapshot.val().player2).val().loss) + 1;
+                                database.ref("players").child(snapshot.val().player2).set({
+                                    name: snapshot.val().player2,
+                                    win: snapshot2.child(snapshot.val().player2).val().win,
+                                    loss: lossCount
+                                });
+
+                                $("#p2wr").html(" <p>Wins: " + snapshot2.child(snapshot.val().player2).val().win + "</p><p> Losses: " + lossCount + "</p>");
+
+                            });
+                        });
+                            
+                        $(".p2img").remove();
+                        $("#result").html("");
+                            
+                    }, 2000);
+                    $("#result").html("Player 1 wins!");
+            };
+
+            var draw = function(){
+                p1move = "";
+                p1moved = false;
+                p2move = "";
+                p2moved = false;
+                $("#result").html("Draw!");
+                setTimeout(function(){
+                    database.ref("player1").once("value", function(snapshot) {
+                        database.ref("player1").set({
+                            player1: snapshot.val().player1,
+                            move: null
+                        });
+                        database.ref("players").once("value", function(snapshot2) {
+                            var winCount = parseInt(snapshot2.child(snapshot.val().player1).val().win);
+                            database.ref("players").child(snapshot.val().player1).set({
+                                name: snapshot.val().player1,
+                                win: winCount,
+                                loss: snapshot2.child(snapshot.val().player1).val().loss
+                            });
+
+                            $("#p1wr").html(" <p>Wins: " + winCount + "</p><p> Losses: " + snapshot2.child(snapshot.val().player1).val().loss + "</p>");
+
+                        });
+                    });
+                            
+                    $(".p1img").remove();
+                    $("#result").html("");
+                }, 2000);
+                setTimeout(function(){
+                    database.ref("player2").once("value", function(snapshot) {
+                        database.ref("player2").set({
+                            player2: snapshot.val().player2,
+                            move: null
+                        });
+                        database.ref("players").once("value", function(snapshot2) {
+                            var lossCount = parseInt(snapshot2.child(snapshot.val().player2).val().loss);
+                            database.ref("players").child(snapshot.val().player2).set({
+                                name: snapshot.val().player2,
+                                win: snapshot2.child(snapshot.val().player2).val().win,
+                                loss: lossCount
+                            });
+
+                            $("#p2wr").html(" <p>Wins: " + snapshot2.child(snapshot.val().player2).val().win + "</p><p> Losses: " + lossCount + "</p>");
+
+                        });
+                    });
+                            
+                    $(".p2img").remove();
+                    $("#result").html("");
+                            
+                }, 2000);                
+            }
+
+            var p2win = function(){
+                p1move = "";
+                p1moved = false;
+                p2move = "";
+                p2moved = false;
+                $("#result").html("Player 2 wins!");
+                setTimeout(function(){
+                    database.ref("player1").once("value", function(snapshot) {
+                        database.ref("player1").set({
+                            player1: snapshot.val().player1,
+                            move: null
+                        });
+                        database.ref("players").once("value", function(snapshot2) {
+                            var lossCount = parseInt(snapshot2.child(snapshot.val().player1).val().loss) + 1;
+                            database.ref("players").child(snapshot.val().player1).set({
+                                name: snapshot.val().player1,
+                                win: snapshot2.child(snapshot.val().player1).val().win,
+                                loss: lossCount,
+                            });
+
+                            $("#p1wr").html(" <p>Wins: " + snapshot2.child(snapshot.val().player1).val().win + "</p><p> Losses: " + lossCount + "</p>");
+
+                        });
+                    });
+                            
+                    $(".p1img").remove();
+                    $("#result").html("");
+                }, 2000);
+                setTimeout(function(){
+                    database.ref("player2").once("value", function(snapshot) {
+                        database.ref("player2").set({
+                            player2: snapshot.val().player2,
+                            move: null
+                        });
+                        database.ref("players").once("value", function(snapshot2) {
+
+                                    
+                            var winCount = parseInt(snapshot2.child(snapshot.val().player2).val().win) + 1;
+                            database.ref("players").child(snapshot.val().player2).set({
+                                name: snapshot.val().player2,
+                                win: winCount,
+                                loss: snapshot2.child(snapshot.val().player2).val().loss
+                            });
+
+                            $("#p2wr").html(" <p>Wins: " + winCount + "</p><p> Losses: " + snapshot2.child(snapshot.val().player2).val().loss + "</p>");
+
+                        });
+                    });
+                            
+                    $(".p2img").remove();
+                    $("#result").html("");
+                            
+                }, 2000);
+            }
+
+             database.ref("player1").on("value", function(snapshot) {
+                 
+                 var val = snapshot.val();
+                
+                 if (snapshot.child("player1").exists()){
+                    if (p1playing == false) {
+                        $("#p1i").html(" Someone else is playing");
+                    };
+
+                    $("#p1name").html("<h2>" + val.player1 + "</h2>");
+
+                    p1selected = true;
+                    database.ref("players").once("value", function(snapshot) {
+                        if (snapshot.child(val.player1).exists() && (p1scoreOnce == true)) {
+                            p1scoreOnce = false;
+                            $("#p1wr").html(" <p>Wins: " + snapshot.child(val.player1).val().win + "</p><p> Losses: " + snapshot.child(val.player1).val().loss + "</p>");
+                        } else if (p1scoreOnce == true) {
+                            p1scoreOnce = false;
+                            $("#p1wr").html("<p>Wins: " + "0" + "</p><p> Losses: " + "0" + "</p>");
+                        }
+                    });
+                 } else if (snapshot.child("player1").exists()==false)  {
+                    $("#p1i").html("Waiting for Player 1");
+                 }
+                
+
+                 if (snapshot.child("move").exists()){
+                    p1moved = true;
+                    p1move = snapshot.val().move;
+                    $("#p1").append("<img class=\"p1img\" src=\"assets/images/" + snapshot.val().move + ".png\" style=\"width: 150px\">");
+                    if (!p1playing){
+                        $("#p1i").html("Player 1 has made its move, waiting on Player 2");
+                        $(".p1img").addClass("tempHidden");
+                    }
+                 }
+
+                if (p1moved && p2moved){
+
+                    $(".p1img").removeClass("tempHidden");
+                    $(".p2img").removeClass("tempHidden");
+
+                    if (p1move == "rock" && p2move == "scissors"){
+                        p1win();
+                    }
+                    if (p1move == "scissors" && p2move == "paper"){
+                        p1win(); 
+                    }
+                    if (p1move == "paper" && p2move == "rock"){
+                        p1win();
+                    }
+                    if (p1move == "rock" && p2move == "rock"){
+                        draw();
+                    }
+                    if (p1move == "scissors" && p2move == "scissors"){
+                        draw();
+                    }
+                    if (p1move == "paper" && p2move == "paper"){
+                        draw();
+                    }
+                    if (p1move == "rock" && p2move == "paper"){
+                        p2win();
+                    }
+                    if (p1move == "scissors" && p2move == "rock"){
+                        p2win();
+                    }
+                    if (p1move == "paper" && p2move == "scissors"){
+                        p2win();
+                    }
+
+                }
+
+             });
+
+             database.ref("player2").on("value", function(snapshot) {
+                
+                 var val = snapshot.val();
+
+                 if (snapshot.child("player2").exists()){
+                    if (p2playing == false) {
+                        $("#p2i").html(" Someone else is playing");
+                    };
+
+                    $("#p2name").html("<h2>" + val.player2 + "</h2>");
+
+                    p2selected = true;
+                    database.ref("players").once("value", function(snapshot) {
+                        if (snapshot.child(val.player2).exists() && (p2scoreOnce == true)) {
+                            p2scoreOnce = false;
+                            $("#p2wr").html(" <p>Wins: " + snapshot.child(val.player2).val().win + "</p><p> Losses: " + snapshot.child(val.player2).val().loss + "</p>");
+                        } else if (p2scoreOnce == true) {
+                            p2scoreOnce = false;
+                            $("#p2wr").html("<p>Wins: " + "0" + "</p><p> Losses: " + "0" + "</p>");
+                        }                
+                    });
+                 } else if (snapshot.child("player2").exists()==false) {
+                    $("#p2i").html("Waiting for Player 2");             
+                 }
+
+                if (snapshot.child("move").exists()){
+                    p2moved = true;
+                    p2move = snapshot.val().move;
+                    $("#p2").append("<img class=\"p2img\" src=\"assets/images/" + snapshot.val().move + ".png\" style=\"width: 150px\">");
+                    if (!p2playing){
+                        $("#p2i").html("Player 2 has made its move, waiting on Player 1");
+                        $(".p2img").addClass("tempHidden");
+                    }
+                }
+
+                if (p1moved && p2moved){
+         
+                    $(".p1img").removeClass("tempHidden");
+                    $(".p2img").removeClass("tempHidden");
+
+                    if (p1move == "rock" && p2move == "scissors"){
+                        p1win();
+                    }
+                    if (p1move == "scissors" && p2move == "paper"){
+                        p1win(); 
+                    }
+                    if (p1move == "paper" && p2move == "rock"){
+                        p1win();
+                    }
+                    if (p1move == "rock" && p2move == "rock"){
+                        draw();
+                    }
+                    if (p1move == "scissors" && p2move == "scissors"){
+                        draw();
+                    }
+                    if (p1move == "paper" && p2move == "paper"){
+                        draw();
+                    }
+                    if (p1move == "rock" && p2move == "paper"){
+                        p2win();
+                    }
+                    if (p1move == "scissors" && p2move == "rock"){
+                        p2win();
+                    }
+                    if (p1move == "paper" && p2move == "scissors"){
+                        p2win();
+                    }
+               }
+             });
+
+             var clean = function(){
+                if (p1playing){
+                     database.ref("player1").set({
+                         player1: null
+                     });
+                 } else if (p2playing) {
+                     database.ref("player2").set({
+                         player1: null
+                     });
+                 }
+             }
+
+             $(window).on("beforeunload", function() { 
+                 return clean(); 
+            });
+
+            // window.addEventListener("beforeunload", function() {
+            // return "hi";
+            // });
+
+                //WORKING REMOVAL
+            // $(".answer1").on("click", function(){
+            //     database.ref("player1").set({
+            //              player1: null
+            //          });
+            // });
+
+        });
+
+    
+
+    </script>
+
+  </head>
+  <body>
+
+         <div class="container game">
+                <!-- <h1 style="margin: 0 auto; text-align: center"> Rock Paper Scissors </h1>  -->
+            <div class="row col-lg-12 col-md-12 col-sm-12 col-xs-12 "  style="text-align:center">
+                <h1 style="margin: 0 auto"> Rock Paper Scissors </h1>         
+            </div>
+            <br>
+            <br>
+            <div class="row col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-8 offset-xs-2" id="test" style="text-align:center; margin: 0 auto" >
+                <input type="text" placeholder="Name" style="margin-right: 15px; margin-bottom: 50px" id="namer"><button class="btn" style="height: 30px" id="start">Start</button></input>
+          
+            </div>
+            <div class="row" style="text-align:center" >
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p1i" style="background-color: grey; border: 2px solid black">
+                        Waiting for Player 1
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p2i" style="background-color: grey; border: 2px solid black">
+                        Waiting for Player 2
+                    </div>
+            </div>
+            <div class="row" style="text-align:center" >
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p1" style="background-color: grey; border: 2px solid black; height: 250px">
+
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p2" style="background-color: grey; border: 2px solid black; height: 250px">
+
+                </div>
+        </div>
+            <div class="row" style="text-align:center" >
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p1name" style="background-color: grey; border: 2px solid black">
+
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p2name" style="background-color: grey; border: 2px solid black">
+
+                </div>
+        </div>
+            <div class="row" style="text-align:center" >
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="result" style="background-color: grey">
+                    
+                </div>
+            </div>
+            <div class="row" style="text-align:center" >
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p1wr" style="background-color: grey">
+                    
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="p2wr" style="background-color: grey">
+                    
+                </div>
+            </div>
+            <div class="row" style="text-align:center">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="background-color: blue">
+                    <button id="p1r"><img src="assets/images/rock.png" style="width:100px"></button>
+                    <button id="p1s"><img src="assets/images/scissors.png" style="width:100px"></button>
+                    <button id="p1p"><img src="assets/images/paper.png" style="width:100px"></button>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"  style="background-color: yellow">
+                        <button id="p2r"><img src="assets/images/rock.png" style="width:100px"></button>
+                        <button id="p2s"><img src="assets/images/scissors.png" style="width:100px"></button>
+                        <button id="p2p"><img src="assets/images/paper.png" style="width:100px"></button>
+                </div>
+            </div>
+               
+            <br>
+            <br>
+
+            <!-- <div class="row col-lg-4 offset-lg-5 col-md-4 offset-md-5 col-sm-4 offset-sm-5 col-xs-4 offset-xs-5">
+                
+            </div>
+            <div class="row col-lg-4 offset-lg-5 col-md-4 offset-md-5 col-sm-4 offset-sm-5 col-xs-4 offset-xs-5">
+                <!-- <button class="answer2 btn" style="height: 35px"></button> -->
+            <!-- </div>
+            <div class="row col-lg-4 offset-lg-5 col-md-4 offset-md-5 col-sm-4 offset-sm-5 col-xs-4 offset-xs-5">
+                <!-- <button class="answer3 btn" style="height: 35px"></button> -->
+            <!-- </div>
+            <div class="row col-lg-4 offset-lg-5 col-md-4 offset-md-5 col-sm-4 offset-sm-5 col-xs-4 offset-xs-5"> -->
+                <!-- <button class="answer4 btn" style="height: 35px"></button> -->
+            <!-- </div> --> 
+
+            <div class="container chatbox" style="height:200px; background-color: lightgrey">
+
+        
+            </div>
+            <input type="text" placeholder="Chatbox" style="position: relative; top: 0px; margin-right: 15px; margin-bottom: 50px; width:87%" id="chatbox"><button class="btn" style="height: 30px" id="start">Send Message</button></input>
+          
+        </div>
+  </body>
+</html>
