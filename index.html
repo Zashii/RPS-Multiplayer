@@ -119,12 +119,14 @@
                 }
             });
 
-            $("#chatbox").on("click", function(){
+            $("#chatsubmit").on("click", function(){
                 var chatmsg = $("#chatbox").val();
                 database.ref("chatbox").push({
                             message: chatmsg
                 });
-                $(".chatbox").append(chatmsg);
+                if (p1playing || p2playing){
+                    $(".chatbox").append("<p>"+ selectedName + ": " + chatmsg + "</p>");
+                }
             });
             
             $("#start").on("click", function(){
@@ -611,7 +613,7 @@
 
         
             </div>
-            <input type="text" placeholder="Chatbox" style="position: relative; top: 0px; margin-right: 15px; margin-bottom: 50px; width:87%" id="chatbox"><button class="btn" style="height: 30px" id="start">Send Message</button></input>
+            <input type="text" placeholder="Chatbox" style="position: relative; top: 0px; margin-right: 15px; margin-bottom: 50px; width:87%" id="chatbox"><button class="btn" style="height: 30px" id="chatsubmit">Send Message</button></input>
           
         </div>
   </body>
