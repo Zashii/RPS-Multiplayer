@@ -122,7 +122,7 @@
             $("#chatsubmit").on("click", function(){
                 var chatmsg = $("#chatbox").val();
 
-                if (p1playing || p2playing){
+                if (true){
                     database.ref("chatbox").push({
                             name: selectedName,
                             message: chatmsg
@@ -358,7 +358,7 @@
                 // if (p1playing || p2playing){
                     //alert (snapshot.val().message);
                     if (snapshot.exists()){
-                        $(".chatbox").append("<p>"+ snapshot.val().name + ": " + snapshot.val().message + "</p>");
+                        $(".chatbox").prepend("<p>"+ snapshot.val().name + ": " + snapshot.val().message + "</p>");
                     }
                 // }
             });
